@@ -7,7 +7,7 @@ const useStyles = makeStyles({
     root: {
 			display:'flex',
 			height:'100vh',
-			overflow:'visible'
+			overflow:'hidden',
 		},
 		left:{
 			width:'50%',
@@ -27,42 +27,72 @@ const useStyles = makeStyles({
 		}
 });
 
+const generateParticleStyle = s => {
+	return {
+		position:'absolute',
+		left:s.x,
+		top:s.y,
+		color:s.position==='left'?white:black
+	}
+	
+}
+
+const generateParticle = ({num=1},squares) => {
+	let velocity = 1;
+	let windowWidth = window.innerWidth;
+	for(let i=0; i<num; i++){
+		let square = {
+			velocity, 
+			x: Math.floor(windowWidth*Math.random()),
+			y:0,
+			acc:0.05, //acceleration
+ 			text:Math.random()<0.5?'0':'1'
+		}
+		if(square.x>windowWidth/2){
+			square.position='right'
+		}else{
+			square.position='left'
+		}
+		squares.push(square);
+	}
+}
 
 function Home() {
 	const classes = useStyles();
 	const squares = useRef();
-	const [renderedSquare, setRenderedSquare] = useState();
+	const [particleArr, setParticleArr] = useState();
 
-	const renderSquare = (currentSquares) => {		
+	const renderParticle = (currentSquares) => {	
+		if(currentSquares.length===0)return true;
+		let movingParticleCount = 0;	
 		for(let i=0; i<currentSquares.length; i++){
 			let s = currentSquares[i];
-			s.rotation += 0.5;
+			if(Math.abs(s.velocity)<0.05 && s.y>=window.innerHeight*0.9)continue;
+			movingParticleCount += 1;
 			s.y += s.velocity;
-			if((s.y+s.size+s.velocity*100)>=window.innerHeight)currentSquares.splice(i,1)
+			s.velocity += s.acc;
+			if(s.y>window.innerHeight*0.9 && s.velocity>0){
+				// currentSquares.splice(i,1)
+				s.velocity *= -0.5;
+			}
 		}
-		setRenderedSquare([...currentSquares])
+		console.log('hi')
+		setParticleArr([...currentSquares])
+		return movingParticleCount!==0;
 	}	
-
-	const generateSquare = ({maxSize=50, minSize=25},squares) => {
-		let velocity = 0.5;
-		let windowWidth = window.innerWidth;
-		let square = {
-			size: Math.floor(25+Math.random()*(maxSize-minSize)),
-			velocity, 
-			x: Math.floor((windowWidth-maxSize)*Math.random()),
-			y:0,
-			rotation:Math.floor(360*Math.random())
-		}
-		squares.push(square);
-	}
 
 	useEffect(()=>{
 		squares.current = [];
-		setInterval(()=>{
-			generateSquare({},squares.current)
-		},1000)
-		setInterval(()=>{
-			renderSquare(squares.current)
+		let generateCount = 0;
+		let generateIntervalRef;
+		generateIntervalRef = setInterval(()=>{
+			generateParticle({},squares.current)
+			generateCount+=1;
+			if(generateCount>50)clearInterval(generateIntervalRef)
+		},250)
+		let renderIntervalRef;
+		renderIntervalRef = setInterval(()=>{
+			if(!renderParticle(squares.current))clearInterval(renderIntervalRef)
 		},10)
 	}, [])
 
@@ -75,9 +105,9 @@ function Home() {
 				<Typography className={classes.text}>Gallery</Typography>
 			</div>
 			{
-				renderedSquare && renderedSquare.map((s,i)=>(
-					<div key={`squre-${i}`} style={{transform:`rotate(${s.rotation}deg)`,position:'absolute',height:s.size,width:s.size,left:s.x,top:s.y,background:'#fff',border:'1px solid black'}}>
-						
+				particleArr && particleArr.map((s,i)=>(
+					<div key={`squre-${i}`} style={generateParticleStyle(s)}>
+						{s.text}
 					</div>
 				))
 			}
