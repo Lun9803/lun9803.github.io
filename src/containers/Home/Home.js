@@ -30,25 +30,29 @@ const useStyles = makeStyles({
 const generateParticleStyle = s => {
 	return {
 		position:'absolute',
-		left:s.x,
+		left:s.x-10,
 		top:s.y,
+		width:20,
+		textAlign:'center',
 		color:s.position==='left'?white:black
 	}
 	
 }
 
+const screenHeight = window.innerHeight;
+const screenWidth = window.innerWidth;
+
 const generateParticle = ({num=1},squares) => {
 	let velocity = 1;
-	let windowWidth = window.innerWidth;
 	for(let i=0; i<num; i++){
 		let square = {
 			velocity, 
-			x: Math.floor(windowWidth*Math.random()),
+			x: (screenWidth*0.05)+Math.floor((screenWidth*0.9)*Math.random()),
 			y:0,
 			acc:0.05, //acceleration
  			text:Math.random()<0.5?'0':'1'
 		}
-		if(square.x>windowWidth/2){
+		if(square.x>screenWidth/2){
 			square.position='right'
 		}else{
 			square.position='left'
@@ -57,7 +61,6 @@ const generateParticle = ({num=1},squares) => {
 	}
 }
 
-const screenHeight = window.innerHeight;
 
 function Home() {
 	const classes = useStyles();
@@ -89,8 +92,8 @@ function Home() {
 		generateIntervalRef = setInterval(()=>{
 			generateParticle({},squares.current)
 			generateCount+=1;
-			if(generateCount>50)clearInterval(generateIntervalRef)
-		},250)
+			if(generateCount>100)clearInterval(generateIntervalRef)
+		},100)
 		let renderIntervalRef;
 		renderIntervalRef = setInterval(()=>{
 			if(!renderParticle(squares.current))clearInterval(renderIntervalRef)
