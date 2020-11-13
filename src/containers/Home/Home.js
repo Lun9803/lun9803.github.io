@@ -57,6 +57,8 @@ const generateParticle = ({num=1},squares) => {
 	}
 }
 
+const screenHeight = window.innerHeight;
+
 function Home() {
 	const classes = useStyles();
 	const squares = useRef();
@@ -67,16 +69,15 @@ function Home() {
 		let movingParticleCount = 0;	
 		for(let i=0; i<currentSquares.length; i++){
 			let s = currentSquares[i];
-			if(Math.abs(s.velocity)<0.05 && s.y>=window.innerHeight*0.9)continue;
+			if(Math.abs(s.velocity)<0.05 && s.y>=screenHeight*0.9)continue;
 			movingParticleCount += 1;
 			s.y += s.velocity;
 			s.velocity += s.acc;
-			if(s.y>window.innerHeight*0.9 && s.velocity>0){
+			if(s.y>screenHeight*0.9 && s.velocity>0){
 				// currentSquares.splice(i,1)
 				s.velocity *= -0.5;
 			}
 		}
-		console.log('hi')
 		setParticleArr([...currentSquares])
 		return movingParticleCount!==0;
 	}	
