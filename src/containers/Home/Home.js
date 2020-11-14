@@ -27,9 +27,9 @@ const useStyles = makeStyles({
 		fontSize:70,
 	},
 	buttonBase:{
-		marginTop:'40vh',
-		width:150,
-		height:150,
+		marginTop:'30vh',
+		width:'30vw',
+		height:'30vw',
 		display:'flex',
 		alignItems:'center',
 		justifyContent:'center'
@@ -73,7 +73,7 @@ const generateParticle = ({num=1},squares) => {
 			x: (screenWidth*0.05)+Math.floor((screenWidth*0.9)*Math.random()),
 			y:0,
 			acc:0.05, //acceleration
- 			text:Math.random()<0.5?'0':'1'
+ 			text:Math.random()<0.5?'0':'I'
 		}
 		if(square.x>screenWidth/2){
 			square.position='right'
@@ -114,7 +114,8 @@ function Home() {
 		let generateCount = 0;
 		let generateIntervalRef;
 		generateIntervalRef = setInterval(()=>{
-			generateParticle({},squares.current)
+			let particleNum = Math.floor(1+3*Math.random())
+			generateParticle({num:particleNum},squares.current)
 			generateCount+=1;
 			if(generateCount>50)clearInterval(generateIntervalRef)
 		},75)
