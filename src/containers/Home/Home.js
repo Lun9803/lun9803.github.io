@@ -29,7 +29,9 @@ const useStyles = makeStyles({
 	buttonBase:{
 		marginTop:'30vh',
 		width:'30vw',
+		maxWidth:'20vh',
 		height:'30vw',
+		maxHeight:'20vh',
 		display:'flex',
 		alignItems:'center',
 		justifyContent:'center'
@@ -114,7 +116,7 @@ function Home() {
 		let generateCount = 0;
 		let generateIntervalRef;
 		generateIntervalRef = setInterval(()=>{
-			let particleNum = Math.floor(1+3*Math.random())
+			let particleNum = Math.floor(2*Math.random())
 			generateParticle({num:particleNum},squares.current)
 			generateCount+=1;
 			if(generateCount>50)clearInterval(generateIntervalRef)
