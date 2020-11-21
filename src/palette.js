@@ -1,4 +1,3 @@
-export const black = '#050b17'
-export const white = '#e6ebf5'
-export const whiteSecondary = '#a0a8b8'
-export const blackSecondary = '#373a40'
+export const black = '#000000'
+export const white = '#c7c7c7'
+export const blackSecondary = '#2b2b2b'

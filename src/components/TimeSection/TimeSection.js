@@ -47,7 +47,10 @@ const useStyles = makeStyles({
         }
     },
     popper:{
-        whiteSpace:'pre-wrap'
+        '& div':{
+            background:blackSecondary,
+            padding:12
+        }
     },
     toolTipText:{
         fontSize:13.75,
@@ -139,6 +142,7 @@ function TimeSection(props) {
                                 key={el.name+'-'+el.date+'-tooltip'} 
                                 title={<Typography className={classes.toolTipText}>{`${el.fullDate}`}</Typography>} 
                                 placement='top'
+                                PopperProps={{className:classes.popper}}
                             >
                                 <Tab 
                                     className={classes.tab}
