@@ -1,7 +1,29 @@
+import moment from 'moment';
+
 export const getEvents = date => {
-    if(localStorage.hasOwnProperty('user_events')){
-        return JSON.parse(localStorage.getItem('user_events'))[date]||[]
+    // date must be in format YYYY-MM-DD
+    if(localStorage.hasOwnProperty('onetime_events')){
+        return JSON.parse(localStorage.getItem('onetime_events'))[date]||[]
     }else{
         return [];
     }
 }
+
+export const getOneTimeEventsCountOfWeek = () => {
+    if(!localStorage.hasOwnProperty('onetime_events')){
+        return [0,0,0,0,0,0,0]
+    }
+    let date = moment();
+    let countArr = [];
+    let eventsObj = JSON.parse(localStorage.getItem('onetime_events'));
+    for(let i=0; i<7; i++){
+        let events = eventsObj[date.format('YYYY-MM-DD')];
+        countArr.push(events?events.length:0)
+        date.add(1,'days')
+    }
+    return countArr;
+}
+
+export const sortEventsByTime = events => {
+    return events.sort((a,b)=>moment(a.time).diff(moment(b.time))<0?-1:1)
+}   
