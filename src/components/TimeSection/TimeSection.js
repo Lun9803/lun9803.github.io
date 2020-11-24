@@ -1,13 +1,16 @@
 import React, {useEffect, useState} from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Tabs, Tab, Tooltip } from '@material-ui/core';
+import { Typography, Tabs, Tab, Tooltip, IconButton } from '@material-ui/core';
+import AddButton from '@material-ui/icons/AddCircle'
 import { blackSecondary, white, onetimeEventsColour } from '../../palette';
 import moment from 'moment';
 import { getEvents, getOneTimeEventsCountOfWeek, sortEventsByTime } from '../../utilities';
+import AddOnetimeEventModal from '../AddOnetimeEventModal/AddOnetimeEventModal'
 
 const useStyles = makeStyles({
 	timeSection:{
-		paddingTop:'2.5%',
+        paddingTop:'2.5%',
+        height:'97.5%',
 		display:'flex',
 		flexDirection:'column',
 		alignItems:'center'
@@ -23,8 +26,9 @@ const useStyles = makeStyles({
 		alignItems:'flex-end'
 	},
 	timeSubText:{
-		fontSize:16,
-		color:white,
+		fontSize:42,
+        color:white,
+        marginRight:8
 	},
 	monthText:{
 		fontSize:36,
@@ -58,7 +62,12 @@ const useStyles = makeStyles({
     },
     eventsSection:{
         marginTop:30,
-        width:'100%'
+        width:'100%',
+        flexGrow:1,
+        overflow:'scroll',
+        '&::-webkit-scrollbar': {
+            width: 0
+        }
     },
     badge:{
         width:10,
@@ -77,7 +86,14 @@ const useStyles = makeStyles({
         '&:hover':{
             background:blackSecondary
         }
-    }
+    },
+    addEventButton:{
+        width:'100%',
+        height:'20%',
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'flex-start'
+    },
 });
 
 
@@ -119,6 +135,7 @@ function TimeSection(props) {
     const [tab, setTab] = useState(0);
     const [onetimeEvents, setOnetimeEvents] = useState([]);
     const [onetimeEventsCount, setOnetimeEventsCount] = useState([0,0,0,0,0,0,0]);
+    const [modalOpen, setModalOpen] = useState(false);
 
 	useEffect(()=>{
         setOnetimeEventsCount(getOneTimeEventsCountOfWeek());
@@ -137,9 +154,8 @@ function TimeSection(props) {
         <div className={classes.timeSection}>
             <div className={classes.timeBlock}>
                 <Typography className={classes.timeText}>{formatTime(time.hour())}</Typography>
-                <Typography className={classes.timeSubText}>时</Typography>
-                <Typography className={classes.timeText} style={{marginLeft:24}}>{formatTime(time.minute())}</Typography>
-                <Typography className={classes.timeSubText}>分</Typography>
+                <Typography className={classes.timeSubText}>:</Typography>
+                <Typography className={classes.timeText}>{formatTime(time.minute())}</Typography>
             </div>
             <div className={classes.timeBlock} style={{marginTop:30}}>
                 <Typography className={classes.monthText} style={{marginRight:20}}>{time.year()+' 年'}</Typography>
@@ -203,6 +219,13 @@ function TimeSection(props) {
                     ))
                 }
             </div>
+            <div className={classes.addEventButton}>
+                <IconButton onClick={()=>setModalOpen(true)}><AddButton style={{width:60,height:60, color:onetimeEventsColour}}/></IconButton>
+            </div>
+            <AddOnetimeEventModal
+                modalOpen={modalOpen}
+                setModalOpen={setModalOpen}
+            />
         </div>
 	);
 }
