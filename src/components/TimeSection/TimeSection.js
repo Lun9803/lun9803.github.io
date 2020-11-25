@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Tabs, Tab, Tooltip, IconButton } from '@material-ui/core';
+import { Typography, Tabs, Tab, Tooltip, IconButton, Snackbar } from '@material-ui/core';
 import AddButton from '@material-ui/icons/AddCircle'
+import DeleteIcon from '@material-ui/icons/Delete'
 import { blackSecondary, white, onetimeEventsColour } from '../../palette';
 import moment from 'moment';
-import { getEvents, getOneTimeEventsCountOfWeek, sortEventsByTime } from '../../utilities';
+import { getEvents, getOneTimeEventsCountOfWeek, sortEventsByTime, deleteEvent } from '../../utilities';
 import AddOnetimeEventModal from '../AddOnetimeEventModal/AddOnetimeEventModal'
 
 const useStyles = makeStyles({
@@ -79,7 +80,7 @@ const useStyles = makeStyles({
     },
     eventListItem:{
         display:'flex',
-        width:'100%',
+        alignItems:'center',
         cursor:'pointer',
         padding:12,
         borderBottom:`1px solid ${blackSecondary}`,
@@ -94,6 +95,19 @@ const useStyles = makeStyles({
         justifyContent:'center',
         alignItems:'flex-start'
     },
+    deleteIconButton:{
+        '&:hover':{
+            background:onetimeEventsColour
+        }
+    },
+    snackbar:{
+        borderRadius:5,
+        '& div':{
+            background:onetimeEventsColour,
+            padding:'8px 20px',
+            fontSize:20
+        }
+    }
 });
 
 
@@ -136,9 +150,12 @@ function TimeSection(props) {
     const [onetimeEvents, setOnetimeEvents] = useState([]);
     const [onetimeEventsCount, setOnetimeEventsCount] = useState([0,0,0,0,0,0,0]);
     const [modalOpen, setModalOpen] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
 
 	useEffect(()=>{
         setOnetimeEventsCount(getOneTimeEventsCountOfWeek());
+        setOnetimeEvents(getEvents(moment().add(0,'days').format('YYYY-MM-DD')));
 		setInterval(()=>{
 			let newTime = moment()
 			setTime(newTime)
@@ -148,6 +165,21 @@ function TimeSection(props) {
     const onCalenderTabChange = value => {
         setTab(value);
         setOnetimeEvents(getEvents(moment().add(value,'days').format('YYYY-MM-DD')))
+    }
+
+    const setEvents = () => {
+        setOnetimeEvents(getEvents(moment().add(tab,'days').format('YYYY-MM-DD')));
+        setOnetimeEventsCount(getOneTimeEventsCountOfWeek());
+    }
+
+    const onDeleteEvent = (event) => {
+        deleteEvent(event)
+        setEvents()
+        setSnackbarMessage(`事务“${event.title}”已删除`)
+        setSnackbarOpen(true);
+        setTimeout(()=>{
+            setSnackbarOpen(false)
+        },6000)
     }
 
   	return (
@@ -206,14 +238,17 @@ function TimeSection(props) {
                 {
                     onetimeEvents && sortEventsByTime(onetimeEvents).map(el=>(
                         <Tooltip 
-                            key={el.titlie+'-'+el.time+'-tooltip'} 
+                            key={el.title+'-'+el.time+'-tooltip'} 
                             title={el.description} 
-                            placement='top'
+                            placement='right'
                             PopperProps={{className:classes.popper}}
                         >
                             <div className={classes.eventListItem}>
                                 <Typography  style={{color:white,fontSize:16,marginRight:12}}>{moment(el.time).format('HH:mm')}</Typography>
-                                <Typography style={{color:white,fontSize:16}}>{el.title}</Typography>
+                                <Typography style={{color:white,fontSize:16,flexGrow:1}}>{el.title}</Typography>
+                                <IconButton className={classes.deleteIconButton} onClick={()=>onDeleteEvent(el)}>
+                                    <DeleteIcon style={{width:20,height:20,color:white}}/>
+                                </IconButton>
                             </div>
                         </Tooltip>
                     ))
@@ -223,8 +258,15 @@ function TimeSection(props) {
                 <IconButton onClick={()=>setModalOpen(true)}><AddButton style={{width:60,height:60, color:onetimeEventsColour}}/></IconButton>
             </div>
             <AddOnetimeEventModal
+                onAdd={setEvents}
                 modalOpen={modalOpen}
                 setModalOpen={setModalOpen}
+            />
+            <Snackbar
+                className={classes.snackbar} 
+                anchorOrigin={{vertical:'bottom',horizontal:'left'}} 
+                open={snackbarOpen}
+                message={snackbarMessage}
             />
         </div>
 	);
