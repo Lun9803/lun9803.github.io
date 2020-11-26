@@ -36,3 +36,15 @@ export const deleteEvent = event => {
     eventsObj[date] = eventsObj[date].filter(el=>el.time!==event.time||el.title!==event.title||event.description!==el.description)
     localStorage.setItem('onetime_events',JSON.stringify(eventsObj))
 }
+
+export const cleanExpiredEvents = () => {
+    if(!localStorage.hasOwnProperty('onetime_events'))return;
+    let eventsObj =  JSON.parse(localStorage.getItem('onetime_events'));
+    let newObj = {};
+    let date = moment().add(-7,'days').format('YYYY-MM-DD')
+    Object.keys(eventsObj).forEach(key=>{
+        if(key<date)return;
+        newObj[key] = eventsObj[key]
+    })
+    localStorage.setItem('onetime_events',JSON.stringify(newObj))
+}

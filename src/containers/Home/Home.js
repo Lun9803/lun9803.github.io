@@ -1,8 +1,9 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { makeStyles } from '@material-ui/core/styles'
 import {black } from '../../palette'
 import TimeSection from '../../components/TimeSection/TimeSection'
 import CodeDrop from '../../components/CodeDrop/CodeDrop'
+import { cleanExpiredEvents } from '../../utilities'
 
 const useStyles = makeStyles({
 	root:{
@@ -15,6 +16,10 @@ const useStyles = makeStyles({
 
 function Home() {
 	const classes = useStyles();
+
+	useEffect(()=>{
+		cleanExpiredEvents()
+	},[])
 
   	return (
 		<div className={classes.root}>

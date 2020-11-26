@@ -77,8 +77,8 @@ const useStyles = makeStyles({
         height:10,
         borderRadius:5,
         flexShrink:0,
-        marginLeft:-3,
-        marginTop:-6
+        marginLeft:-6,
+        marginTop:-3
     },
     eventListItem:{
         display:'flex',
