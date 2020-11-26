@@ -14,7 +14,8 @@ const useStyles = makeStyles({
         height:'97.5%',
 		display:'flex',
 		flexDirection:'column',
-		alignItems:'center'
+        alignItems:'center',
+        maxWidth:'100%'
 	},
 	timeText:{
 		fontSize:80,
@@ -46,7 +47,8 @@ const useStyles = makeStyles({
 		background:white
 	},
 	tab:{
-        minWidth:70,
+        minWidth:60,
+        padding:6,
         '&:hover':{
             background:blackSecondary
         }
@@ -106,6 +108,12 @@ const useStyles = makeStyles({
             background:onetimeEventsColour,
             padding:'8px 20px',
             fontSize:20
+        }
+    },
+    tabScrollButton:{
+        color:white,
+        '& svg':{
+            fontSize:32
         }
     }
 });
@@ -195,9 +203,11 @@ function TimeSection(props) {
             </div>
             <div className={classes.calender} style={{marginTop:20}}>
                 <Tabs
-                    style={{width:'100%'}}
-                    classes={{indicator:classes.tabIndicator}}
+                    style={{width:'100%',maxWidth:'100%'}}
+                    classes={{indicator:classes.tabIndicator, scrollButtons:classes.tabScrollButton}}
                     value={tab}
+                    scrollButtons={"on"}
+                    variant={window.innerWidth<500?'scrollable':'fullWidth'}
                     onChange={(event, value)=>onCalenderTabChange(value)}
                     >
                     {
@@ -218,7 +228,7 @@ function TimeSection(props) {
                                         key={el.name+'-'+el.date}  
                                         icon={
                                             <div style={{display:'flex',width:'100%',overflow:'visible'}}>
-                                                <Typography style={{color:white,width:'100%',flexShrink:0}}>{el.name+(index===0?'  (今日)':'')}</Typography>
+                                                <Typography style={{color:white,width:'100%',flexShrink:0}}>{el.name+(index===0?'':'')}</Typography>
                                                 {onetimeEventsCount[index]!==0 && <div className={classes.badge} style={{background:onetimeEventsColour}}></div>}
                                             </div>
                                         }  
