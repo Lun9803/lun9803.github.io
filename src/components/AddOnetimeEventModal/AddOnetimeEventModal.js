@@ -27,8 +27,8 @@ const useStyles = makeStyles({
         justifyContent:'center'
     },
     paper:{
-        marginTop:'-10vh',
-        width:'35%',
+        marginTop:'-17vh',
+        width:'36%',
         maxHeight:'80vh',
         padding:24,
         background:black,
@@ -145,7 +145,7 @@ function AddEventModal(props) {
     return (
         <ThemeProvider theme={pickerTheme}>
             <Modal className={classes.modal} open={modalOpen} onClose={()=>setModalOpen(false)}>
-                <Paper className={classes.paper}>
+                <Paper className={classes.paper} style={{width:window.innerWidth<450?'100%':window.innerWidth<1050?450:undefined}}>
                     <Typography className={classes.title}>添加一次性事务</Typography>
                     <div className={classes.block}>
                         <Typography className={classes.inputTitle}>标题</Typography>

@@ -10,8 +10,8 @@ import AddOnetimeEventModal from '../AddOnetimeEventModal/AddOnetimeEventModal'
 
 const useStyles = makeStyles({
 	timeSection:{
-        paddingTop:'2.5%',
-        height:'97.5%',
+        paddingTop:'2.5vh',
+        height:'97.5vh',
 		display:'flex',
 		flexDirection:'column',
         alignItems:'center',
