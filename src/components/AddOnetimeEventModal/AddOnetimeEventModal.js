@@ -5,6 +5,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import { black, white, blackSecondary, onetimeEventsColour } from '../../palette';
 import moment from 'moment'  
 import DateFnsUtils from '@date-io/date-fns';
+import { getEvents, addEvent, updateEvent } from '../../utilities'
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
 
 const pickerTheme = createMuiTheme({
@@ -88,8 +89,11 @@ function AddEventModal(props) {
     const {
         modalOpen,
         setModalOpen,
-        onAdd
+        onAdd,
+        selectedEvent,
     } = props;
+
+
     const [date, setDate] = useState(moment());
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -99,10 +103,17 @@ function AddEventModal(props) {
 
     useEffect(()=>{
         if(modalOpen){
-            setDate(moment());
+            if(selectedEvent){
+                setDate(selectedEvent.time);
+                setTitle(selectedEvent.title);
+                setDescription(selectedEvent.description);
+            }
+            else{
+                setDate(moment());
+            }
             setMinDate(moment());
         }
-    },[modalOpen])
+    },[modalOpen, selectedEvent])
 
     const onCancel = () => {
         setDate(moment());
@@ -112,24 +123,16 @@ function AddEventModal(props) {
     }
 
     const onConfirm = () => {
-        let onetimeEvents = {};
-        if(localStorage.hasOwnProperty('onetime_events')){
-            onetimeEvents = JSON.parse(localStorage.getItem('onetime_events'))
-        };
-        let dateStr = moment(date).format('YYYY-MM-DD');
         let obj = {
             time:moment(date).format('YYYY-MM-DD HH:mm'),
             description, 
-            title
+            title,
+            id:moment(date).format('YYYY-MM-DD')+'_'+ getEvents(moment(date).format('YYYY-MM-DD')).length
         }
-        if(onetimeEvents[dateStr]){
-            onetimeEvents[dateStr].push(obj)
-        }else{
-            onetimeEvents[dateStr] = [obj]
-        }
-        localStorage.setItem('onetime_events',JSON.stringify(onetimeEvents))
+        if(selectedEvent){updateEvent(selectedEvent,obj);}
+        else{addEvent(obj)}
         setSnackbarMessage(
-            `事务“${title}”创建成功，`+
+            `事务“${selectedEvent?selectedEvent.title:title}”${selectedEvent?'更新':'创建'}成功，`+
             `约${moment(date).utc().diff(moment().utc(),'hours')>=24?(Math.floor(moment(date).diff(moment(),'hours')/24)+'天'):''}`+
             `${moment(date).utc().diff(moment().utc(),'hours')%24}小时`+
             `${moment(date).utc().diff(moment().utc(),'minutes')%60}分钟后开始`
@@ -146,7 +149,7 @@ function AddEventModal(props) {
         <ThemeProvider theme={pickerTheme}>
             <Modal className={classes.modal} open={modalOpen} onClose={()=>setModalOpen(false)}>
                 <Paper className={classes.paper} style={{width:window.innerWidth<450?'100%':window.innerWidth<1050?450:undefined}}>
-                    <Typography className={classes.title}>添加一次性事务</Typography>
+                    <Typography className={classes.title}>{selectedEvent?'编辑事务':'添加事务'}</Typography>
                     <div className={classes.block}>
                         <Typography className={classes.inputTitle}>标题</Typography>
                         <InputBase

@@ -1,4 +1,4 @@
-export const black = '#001514'
-export const white = '#f6f8ff'
-export const blackSecondary = '#252422'
-export const onetimeEventsColour = '#e6757d'
+export const black = '#0D1B2A'
+export const white = '#E0E1DD'
+export const blackSecondary = '#1B263B'
+export const onetimeEventsColour = '#e39499'
