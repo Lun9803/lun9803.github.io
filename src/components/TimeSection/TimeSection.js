@@ -2,7 +2,10 @@ import React, {useEffect, useState} from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Tabs, Tab, Tooltip, IconButton, Snackbar } from '@material-ui/core';
 import AddButton from '@material-ui/icons/AddCircle'
+import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
+import WarningIcon from '@material-ui/icons/WarningOutlined'
+import ScheduleIcon from '@material-ui/icons/ScheduleOutlined'
 import { blackSecondary, white, onetimeEventsColour } from '../../palette';
 import moment from 'moment';
 import { getEvents, getOneTimeEventsCountOfWeek, sortEventsByTime, deleteEvent } from '../../utilities';
@@ -160,6 +163,7 @@ function TimeSection(props) {
     const [modalOpen, setModalOpen] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [selectedEvent, setSelectedEvent] = useState();
 
 	useEffect(()=>{
         setOnetimeEventsCount(getOneTimeEventsCountOfWeek());
@@ -188,6 +192,11 @@ function TimeSection(props) {
         setTimeout(()=>{
             setSnackbarOpen(false)
         },6000)
+    }
+
+    const onEditEvent = (event) => {
+        setSelectedEvent(event);
+        setModalOpen(true);
     }
 
   	return (
@@ -248,14 +257,22 @@ function TimeSection(props) {
                 {
                     onetimeEvents && sortEventsByTime(onetimeEvents).map(el=>(
                         <Tooltip 
-                            key={el.title+'-'+el.time+'-tooltip'} 
+                            key={el.id} 
                             title={el.description} 
-                            placement='right'
+                            placement='left'
                             PopperProps={{className:classes.popper}}
                         >
                             <div className={classes.eventListItem}>
-                                <Typography  style={{color:white,fontSize:16,marginRight:12}}>{moment(el.time).format('HH:mm')}</Typography>
+                                {
+                                    tab===0 && moment().diff(moment(el.time),'minutes')>0 ?
+                                    <WarningIcon style={{width:24,height:24,color:onetimeEventsColour}}/> :
+                                    <ScheduleIcon style={{width:24,height:24,color:white}}/>
+                                }
+                                <Typography  style={{color:white,fontSize:16,marginRight:12,marginLeft:12}}>{moment(el.time).format('HH:mm')}</Typography>
                                 <Typography style={{color:white,fontSize:16,flexGrow:1}}>{el.title}</Typography>
+                                <IconButton className={classes.deleteIconButton} onClick={()=>onEditEvent(el)}>
+                                    <EditIcon style={{width:20,height:20,color:white}}/>
+                                </IconButton>
                                 <IconButton className={classes.deleteIconButton} onClick={()=>onDeleteEvent(el)}>
                                     <DeleteIcon style={{width:20,height:20,color:white}}/>
                                 </IconButton>
@@ -265,13 +282,17 @@ function TimeSection(props) {
                 }
             </div>
             <div className={classes.addEventButton}>
-                <IconButton onClick={()=>setModalOpen(true)}><AddButton style={{width:60,height:60, color:onetimeEventsColour}}/></IconButton>
+                <IconButton onClick={()=>{setSelectedEvent();setModalOpen(true)}}><AddButton style={{width:60,height:60, color:onetimeEventsColour}}/></IconButton>
             </div>
-            <AddOnetimeEventModal
-                onAdd={setEvents}
-                modalOpen={modalOpen}
-                setModalOpen={setModalOpen}
-            />
+            {
+                <AddOnetimeEventModal
+                    onAdd={setEvents}
+                    modalOpen={modalOpen}
+                    setModalOpen={setModalOpen}
+                    selectedEvent={selectedEvent}
+                />
+            }
+
             <Snackbar
                 className={classes.snackbar} 
                 anchorOrigin={{vertical:'bottom',horizontal:'left'}} 
