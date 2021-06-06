@@ -3,8 +3,8 @@ import { makeStyles } from '@material-ui/core/styles'
 import { white} from '../../palette'
 
 const useStyles = makeStyles({
-    root: {
-        flexGrow:1
+	root: {
+			flexGrow:1
 	},
 });
 
@@ -39,8 +39,8 @@ const generateParticle = ({num=1,minX,maxX},squares) => {
 
 function CodeDrop() {
 	const classes = useStyles();
-    const squares = useRef();
-    const conatainerRef = useRef();
+	const squares = useRef();
+	const conatainerRef = useRef();
 	const [particleArr, setParticleArr] = useState();
 	const [buttonOpacity, setButtonOpacity] = useState(-1);
 
@@ -60,22 +60,24 @@ function CodeDrop() {
 	useEffect(()=>{
 		squares.current = [];
 		setInterval(()=>{
-            let minX = conatainerRef.current.getBoundingClientRect().left;
-            let maxX = conatainerRef.current.getBoundingClientRect().right;
+			if(document.hidden)return;
+			let minX = conatainerRef.current.getBoundingClientRect().left;
+			let maxX = conatainerRef.current.getBoundingClientRect().right;
 			let particleNum = Math.floor(2*Math.random())
 			generateParticle({num:particleNum,minX,maxX},squares.current)
 		},250)
 		setInterval(()=>{
+			if(document.hidden)return;
 			renderParticle(squares.current)
 		},10)
-    }, [])
+	}, [])
 
 	useEffect(()=>{
 		if(buttonOpacity<0 || buttonOpacity>=1)return;
 		setTimeout(()=>setButtonOpacity(buttonOpacity+0.01),10)
 	},[buttonOpacity])
 
-  	return (
+	return (
 		<div className={classes.root} ref={conatainerRef}>
 				{
 					particleArr && particleArr.map((s,i)=>(
