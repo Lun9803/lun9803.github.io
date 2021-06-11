@@ -23,10 +23,9 @@ const generateParticleStyle = s => {
 const screenHeight = window.innerHeight;
 
 const generateParticle = ({num=1,minX,maxX},squares) => {
-	let velocity = 1;
 	for(let i=0; i<num; i++){
 		let square = {
-			velocity, 
+			velocity:1, 
 			x: Math.floor(minX+(maxX-minX)*Math.random()),
 			y:0,
 			acc:0.05, //acceleration
@@ -59,17 +58,21 @@ function CodeDrop() {
 
 	useEffect(()=>{
 		squares.current = [];
-		setInterval(()=>{
+		let generatorInterval = setInterval(()=>{
 			if(document.hidden)return;
 			let minX = conatainerRef.current.getBoundingClientRect().left;
 			let maxX = conatainerRef.current.getBoundingClientRect().right;
 			let particleNum = Math.floor(2*Math.random())
 			generateParticle({num:particleNum,minX,maxX},squares.current)
 		},250)
-		setInterval(()=>{
+		let renderInterval = setInterval(()=>{
 			if(document.hidden)return;
 			renderParticle(squares.current)
 		},10)
+		return ()=>{
+			clearInterval(generatorInterval)
+			clearInterval(renderInterval)
+		}
 	}, [])
 
 	useEffect(()=>{

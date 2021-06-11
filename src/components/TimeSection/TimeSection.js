@@ -177,7 +177,7 @@ function TimeSection(props) {
   	return (
 		<div className={classes.timeSection}>
 			<div className={classes.timeBlock}>
-				<Typography className={classes.timeText}>{formatTime(time.hour())}</Typography>
+				<Typography className={classes.timeText} style={{marginLeft:6}}>{formatTime(time.hour())}</Typography>
 				<Typography className={classes.timeSubText}>:</Typography>
 				<Typography className={classes.timeText}>{formatTime(time.minute())}</Typography>
 			</div>
