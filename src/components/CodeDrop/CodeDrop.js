@@ -4,7 +4,8 @@ import { white} from '../../palette'
 
 const useStyles = makeStyles({
 	root: {
-			flexGrow:1
+		flexGrow:1,
+		// cursor:'none'
 	},
 });
 
