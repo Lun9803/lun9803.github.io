@@ -1,18 +1,14 @@
 import React, {useEffect, useState} from "react";
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Tabs, Tab, Tooltip, IconButton, Snackbar } from '@material-ui/core';
+import { Typography, Tabs, Tab, IconButton, Snackbar } from '@material-ui/core';
 import AddButton from '@material-ui/icons/AddCircle'
-import EditIcon from '@material-ui/icons/Edit'
-import DeleteIcon from '@material-ui/icons/Delete'
-import WarningIcon from '@material-ui/icons/WarningOutlined'
-import ScheduleIcon from '@material-ui/icons/ScheduleOutlined'
 // import FavoriteIcon from '@material-ui/icons/FavoriteBorder'
 // import CalenderIcon from '@material-ui/icons/EventOutlined'
 import { blackSecondary, white, onetimeEventsColour } from '../../palette';
 import moment from 'moment';
 import { getEvents, getOneTimeEventsCountOfWeek, sortEventsByTime, deleteEvent } from '../../utilities';
-import AddOnetimeEventModal from '../AddOnetimeEventModal/AddOnetimeEventModal'
-
+import AddOnetimeEventModal from '../UI/AddOnetimeEventModal/AddOnetimeEventModal'
+import OneTimeEventItem from '../UI/OneTimeEventItem/OneTimeEventItem'
 
 const useStyles = makeStyles({
 	timeSection:{
@@ -60,16 +56,6 @@ const useStyles = makeStyles({
 			background:blackSecondary
 		}
 	},
-	popper:{
-		'& div':{
-			background:blackSecondary,
-			padding:8
-		}
-	},
-	toolTipText:{
-		fontSize:13.75,
-		color:white,
-	},
 	eventsSection:{
 		marginTop:30,
 		width:'100%',
@@ -87,27 +73,12 @@ const useStyles = makeStyles({
 		marginLeft:-6,
 		marginTop:-3
 	},
-	eventListItem:{
-		display:'flex',
-		alignItems:'center',
-		cursor:'pointer',
-		padding:12,
-		borderBottom:`1px solid ${blackSecondary}`,
-		'&:hover':{
-			background:blackSecondary
-		}
-	},
 	addEventButton:{
 		width:'100%',
 		height:'20%',
 		display:'flex',
 		justifyContent:'center',
 		alignItems:'flex-start'
-	},
-	deleteIconButton:{
-		'&:hover':{
-			background:onetimeEventsColour
-		}
 	},
 	snackbar:{
 		borderRadius:5,
@@ -225,29 +196,17 @@ function TimeSection(props) {
 				>
 					{
 						generateWeekCalender(time).map((el,index)=>(
-								<Tooltip 
-									key={el.name+'-'+el.date+'-tooltip'} 
-									title={
-										<div>
-										<Typography className={classes.toolTipText}>{`${el.fullDate}`}</Typography>
-										{onetimeEventsCount[index]!==0 && <Typography className={classes.toolTipText} style={{color:onetimeEventsColour}}>{`${onetimeEventsCount[index]}个事务`}</Typography>}
-										</div>
-									} 
-									placement='top'
-									PopperProps={{className:classes.popper}}
-								>
-									<Tab 
-										className={classes.tab}
-										key={el.name+'-'+el.date}  
-										icon={
-											<div style={{display:'flex',width:'100%',overflow:'visible'}}>
-												<Typography style={{color:white,width:'100%',flexShrink:0}}>{el.name+(index===0?'':'')}</Typography>
-												{onetimeEventsCount[index]!==0 && <div className={classes.badge} style={{background:onetimeEventsColour}}></div>}
-											</div>
-										}  
-										label={<Typography style={{color:white,fontSize:24}}>{el.date}</Typography>}
-									/>
-								</Tooltip>
+							<Tab 
+								className={classes.tab}
+								key={el.name+'-'+el.date}  
+								icon={
+									<div style={{display:'flex',width:'100%',overflow:'visible'}}>
+										<Typography style={{color:white,width:'100%',flexShrink:0}}>{el.name+(index===0?'':'')}</Typography>
+										{onetimeEventsCount[index]!==0 && <div className={classes.badge} style={{background:onetimeEventsColour}}></div>}
+									</div>
+								}  
+								label={<Typography style={{color:white,fontSize:24}}>{el.date}</Typography>}
+							/>
 						))	  
 					}
 				</Tabs>
@@ -260,28 +219,11 @@ function TimeSection(props) {
 				}
 				{
 					onetimeEvents && sortEventsByTime(onetimeEvents).map(el=>(
-						<Tooltip 
-							key={el.id} 
-							title={el.description} 
-							placement='left'
-							PopperProps={{className:classes.popper}}
-						>
-							<div className={classes.eventListItem}>
-								{
-									tab===0 && moment().diff(moment(el.time),'minutes')>0 ?
-									<WarningIcon style={{width:24,height:24,color:onetimeEventsColour}}/> :
-									<ScheduleIcon style={{width:24,height:24,color:white}}/>
-								}
-								<Typography  style={{color:white,fontSize:16,marginRight:12,marginLeft:12}}>{moment(el.time).format('HH:mm')}</Typography>
-								<Typography style={{color:white,fontSize:16,flexGrow:1}}>{el.title}</Typography>
-								<IconButton className={classes.deleteIconButton} onClick={()=>onEditEvent(el)}>
-									<EditIcon style={{width:20,height:20,color:white}}/>
-								</IconButton>
-								<IconButton className={classes.deleteIconButton} onClick={()=>onDeleteEvent(el)}>
-									<DeleteIcon style={{width:20,height:20,color:white}}/>
-								</IconButton>
-							</div>
-						</Tooltip>
+						<OneTimeEventItem
+							item={el}
+							onDeleteEvent={onDeleteEvent}
+							onEditEvent={onEditEvent}
+						/>
 					))
 				}
 			</div>

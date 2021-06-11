@@ -2,10 +2,10 @@ import React,{ useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import { Modal, Paper, Typography, InputAdornment, IconButton, ThemeProvider, createMuiTheme, InputBase, Snackbar } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit'
-import { black, white, blackSecondary, onetimeEventsColour } from '../../palette';
+import { black, white, blackSecondary, onetimeEventsColour } from '../../../palette';
 import moment from 'moment'  
 import DateFnsUtils from '@date-io/date-fns';
-import { getEvents, addEvent, updateEvent } from '../../utilities'
+import { getEvents, addEvent, updateEvent } from '../../../utilities'
 import { MuiPickersUtilsProvider, DateTimePicker } from '@material-ui/pickers';
 
 const pickerTheme = createMuiTheme({
@@ -81,7 +81,10 @@ const useStyles = makeStyles({
 			padding:'8px 20px',
 			fontSize:20
 		}
-	}
+	},
+	timeDialog:{
+		marginTop:-124,
+	},
 })
   
 function AddEventModal(props) {
@@ -181,6 +184,9 @@ function AddEventModal(props) {
 							minDate={minDate}
 							format="yyyy 年 MM 月 dd 日  HH 时 mm 分"
 							allowKeyboardControl={false}
+							DialogProps={{
+								className:classes.timeDialog,
+							}}
 							InputProps={{
 								endAdornment: (
 									<InputAdornment position="end" style={{marginLeft:0}}>
